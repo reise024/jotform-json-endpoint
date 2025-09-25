@@ -4,7 +4,7 @@ export const config = { api: { bodyParser: false } };
 async function readRawBody(req) {
   const chunks = [];
   for await (const ch of req) chunks.push(ch);
-  return Buffer.concat(ch).toString("utf8");
+  return Buffer.concat(chunks).toString("utf8");  // <-- fixed here
 }
 
 function parseQuery(req) {
@@ -36,7 +36,7 @@ export default async function handler(req, res) {
         try { payload = JSON.parse(raw); }
         catch (e) { payload = { _jsonParseError: String(e), _raw: raw }; }
       } else {
-        payload = parseForm(raw);
+        payload = parseForm(raw); // Jotform usually posts x-www-form-urlencoded
       }
     } else {
       res.status(405).json({ ok: false, error: "Method Not Allowed" });
